@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/bjornnorgaard/toolbox/replace"
+	"github.com/bjornnorgaard/toolbox/tools/replace"
 	"github.com/spf13/cobra"
 )
 
