@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func ConvertToMonoChar(filePath string, methodName string, char string) (string, error) {
+func ConvertAllCharsTo(filePath string, methodName string, char string) (string, error) {
 	file, err := os.ReadFile(filePath)
 	if err != nil {
 		return "", err

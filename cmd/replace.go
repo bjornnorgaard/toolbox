@@ -31,7 +31,7 @@ var replaceCmd = &cobra.Command{
 func runReplace() func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
 		file := args[0]
-		result, err := replace.ConvertToMonoChar(file, method, char)
+		result, err := replace.ConvertAllCharsTo(file, method, char)
 		if err != nil {
 			fmt.Println(err)
 			return
