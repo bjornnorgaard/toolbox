@@ -1,4 +1,4 @@
-package oda
+package replace
 
 import (
 	"fmt"
@@ -7,23 +7,31 @@ import (
 	"strings"
 )
 
-func ReplaceAllCharsWith(filePath string, methodName string, r rune) (string, error) {
+func ConvertToMonoChar(filePath string, methodName string, char string) (string, error) {
 	file, err := os.ReadFile(filePath)
 	if err != nil {
 		return "", err
 	}
 
-	method, err := findMethodWithName(methodName, string(file))
+	if len(methodName) == 0 {
+		chars := replaceAllChars(strings.SplitN(string(file), "\n", -1), char)
+		return chars, nil
+	}
 
-	parsedLines := replaceAllChars(method, r)
+	method, err := findMethodWithName(methodName, string(file))
+	if err != nil {
+		return "", err
+	}
+
+	parsedLines := replaceAllChars(method, char)
 
 	return parsedLines, nil
 }
 
-func replaceAllChars(method []string, r rune) string {
+func replaceAllChars(method []string, r string) string {
 	regex := regexp.MustCompile("\\S")
 	for i, line := range method {
-		method[i] = regex.ReplaceAllString(line, string(r))
+		method[i] = regex.ReplaceAllString(line, r)
 	}
 
 	parsedLines := strings.Join(method, "\n")
@@ -45,6 +53,10 @@ func findMethodWithName(methodName string, content string) ([]string, error) {
 			startIndex = i
 			break
 		}
+	}
+
+	if startIndex == 0 {
+		return nil, fmt.Errorf("method not found")
 	}
 
 	for i := startIndex; i <= len(lines); i++ {

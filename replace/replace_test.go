@@ -1,4 +1,4 @@
-package oda
+package replace
 
 import (
 	"testing"
@@ -13,7 +13,7 @@ func testMethod() error {
 }
 
 func TestReplaceAllCharsWith(t *testing.T) {
-	actual, err := ReplaceAllCharsWith("./oda_test.go", "testMethod", 'X')
+	actual, err := ConvertToMonoChar("./replace_test.go", "testMethod", "X")
 	require.NoError(t, err)
 
 	expectation := "XXXX XXXXXXXXXXXX XXXXX X\n\tXXXXXX XXX\nX"
