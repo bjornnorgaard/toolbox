@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/bjornnorgaard/toolbox/oda"
+	"github.com/bjornnorgaard/toolbox/oda/oda"
 )
 
 func main() {
