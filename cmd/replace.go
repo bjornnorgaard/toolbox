@@ -23,7 +23,7 @@ var replaceCmd = &cobra.Command{
 	Use:     "replace <file name>",
 	Aliases: []string{"r"},
 	Args:    cobra.ExactArgs(1),
-	Short:   "Can change all chars of either a method or file to a single char.",
+	Short:   "Can change all chars of either a method or file to a single char",
 	Run:     runReplace(),
 	Long:    `Sometimes it's fun to find new ways to check the readability of files.`,
 }
