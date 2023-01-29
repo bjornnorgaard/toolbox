@@ -61,7 +61,7 @@ func handlePullRequests(dryRun bool, r string) error {
 		return nil
 	}
 
-	atomic.AddInt32(&requests, 1)
+	atomic.AddInt32(&requests, int32(len(pullRequests)))
 	fmt.Println("👀 Checking", r)
 
 	for _, pr := range pullRequests {
