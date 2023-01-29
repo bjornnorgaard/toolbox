@@ -17,12 +17,12 @@ var githubCmd = &cobra.Command{
 
 func runGithub() func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
-		repository, err := gh.CurrentRepository()
+		currentRepository, err := gh.CurrentRepository()
 		if err != nil {
 			fmt.Printf("unable to resolve current repo, %v", err)
 			return
 		}
-		fmt.Println(repository)
+		fmt.Printf("Signed into %s as %s", currentRepository.Host(), currentRepository.Owner())
 	}
 }
 

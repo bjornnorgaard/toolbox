@@ -11,13 +11,15 @@ var approveCmd = &cobra.Command{
 	Use:     "approve",
 	Aliases: []string{"a"},
 	Short:   "Approves pull-requests by dependabot",
-	Long:    `Will approved pull-requests made by dependabot which are passed CI and not previously reviewed`,
-	Run:     runApprove(),
+	Long: `Approves pull-requests by dependabot
+	Only pull-requests which are passing CI 
+	and not already approved in review`,
+	Run: runApprove(),
 }
 
 func runApprove() func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
-		err := github.ApproveDependabotPullRequests()
+		err := github.ApproveDependabotPullRequests(dryRun)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -25,6 +27,11 @@ func runApprove() func(cmd *cobra.Command, args []string) {
 	}
 }
 
+var (
+	dryRun = false
+)
+
 func init() {
 	githubCmd.AddCommand(approveCmd)
+	approveCmd.Flags().BoolVarP(&dryRun, "dry-run", "n", false, "only fetch and print intentions, no actions performed")
 }

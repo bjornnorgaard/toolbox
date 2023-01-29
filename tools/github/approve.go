@@ -4,40 +4,71 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/cli/go-gh"
+	"sync"
+	"sync/atomic"
 )
 
 var (
-	dryRun = true
+	wg       sync.WaitGroup
+	requests int32
+	approved int32
 )
 
-func ApproveDependabotPullRequests() error {
+func ApproveDependabotPullRequests(dryRun bool) error {
+	if dryRun {
+		fmt.Println("🐵 Dry run enabled")
+	}
 	repos, err := getRepositories()
 	if err != nil {
 		return err
 	}
 
 	for _, r := range repos {
+		wg.Add(1)
+		repoName := r.Name
 		repo := fmt.Sprintf("%s/%s", r.Owner.Login, r.Name)
-		err = handlePullRequests(repo)
-		if err != nil {
-			fmt.Printf("failed to handle pull-request for %s", r.Name)
-		}
+		go func() {
+			defer wg.Done()
+			err = handlePullRequests(dryRun, repo)
+			if err != nil {
+				fmt.Println("failed to handle pull-request for", repoName)
+			}
+		}()
 	}
 
-	fmt.Printf("\n🚀 Done approving PRs from dependabot\n")
+	wg.Wait()
+
+	if requests == 0 {
+		fmt.Println("🚀 No PRs to approve")
+		return nil
+	}
+	if approved == 0 {
+		fmt.Println("🚀 Found", requests, "PRs but none could be approved")
+		return nil
+	}
+
+	fmt.Println("🚀 Done approving", approved, "of", requests, "PRs from dependabot")
 	return nil
 }
 
-func handlePullRequests(r string) error {
-	fmt.Printf("👀 Checking %s\n", r)
+func handlePullRequests(dryRun bool, r string) error {
 	pullRequests, err := getPullRequests(r)
 	if err != nil {
 		return err
 	}
 
+	if len(pullRequests) == 0 {
+		return nil
+	}
+
+	atomic.AddInt32(&requests, 1)
+	fmt.Println("👀 Checking", r)
+
 	for _, pr := range pullRequests {
+		atomic.AddInt32(&approved, 1)
+
 		if dryRun {
-			fmt.Printf("\t✅ Would have approved PR#%d: %s\n", pr.Number, pr.Title)
+			fmt.Println("\t✅ Would have approved PR", pr.Number, pr.Title)
 			return nil
 		}
 
@@ -46,15 +77,15 @@ func handlePullRequests(r string) error {
 			return fmt.Errorf("failed to approve %s %d %s - %v", r, pr.Number, pr.Title, err)
 		}
 
-		fmt.Printf("\t✅ Approved PR#%d: %s\n", pr.Number, pr.Title)
+		fmt.Println("\t✅ Approved PR", pr.Number, pr.Title)
 	}
 
 	return nil
 }
 
 func getRepositories() ([]repository, error) {
-	fmt.Printf("Fetching list of repositories\n\n")
-	buffer, _, err := gh.Exec("repo", "list", "--no-archived", "--limit", "10", "--source", "--json", "name,owner")
+	fmt.Println("🕓 Fetching list of repositories")
+	buffer, _, err := gh.Exec("repo", "list", "--no-archived", "--limit", "1000", "--source", "--json", "name,owner")
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch list of repos - %v", err)
 	}
@@ -64,6 +95,8 @@ func getRepositories() ([]repository, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal repos - %v", err)
 	}
+
+	fmt.Println("👀 Found", len(repos), "repositories")
 	return repos, nil
 }
 
