@@ -6,6 +6,10 @@ import (
 	"github.com/cli/go-gh"
 )
 
+var (
+	dryRun = true
+)
+
 func ApproveDependabotPullRequests() error {
 	repos, err := getRepositories()
 	if err != nil {
@@ -32,6 +36,11 @@ func handlePullRequests(r string) error {
 	}
 
 	for _, pr := range pullRequests {
+		if dryRun {
+			fmt.Printf("\t✅ Would have approved PR#%d: %s\n", pr.Number, pr.Title)
+			return nil
+		}
+
 		_, _, err = gh.Exec("pr", "review", fmt.Sprintf("%d", pr.Number), "--repo", r, "--approve", "--body", "@dependabot squash and merge")
 		if err != nil {
 			return fmt.Errorf("failed to approve %s %d %s - %v", r, pr.Number, pr.Title, err)
