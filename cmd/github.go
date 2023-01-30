@@ -19,7 +19,7 @@ func runGithub() func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
 		currentRepository, err := gh.CurrentRepository()
 		if err != nil {
-			fmt.Printf("unable to resolve current repo, %v", err)
+			fmt.Printf("you are likely not in a git repo, anyway here is an error: %v", err)
 			return
 		}
 		fmt.Printf("Signed into %s as %s", currentRepository.Host(), currentRepository.Owner())

@@ -62,13 +62,12 @@ func handlePullRequests(dryRun bool, r string) error {
 	}
 
 	atomic.AddInt32(&requests, int32(len(pullRequests)))
-	fmt.Println("👀 Checking", r)
 
 	for _, pr := range pullRequests {
 		atomic.AddInt32(&approved, 1)
 
 		if dryRun {
-			fmt.Println("\t✅ Would have approved PR", pr.Number, pr.Title)
+			fmt.Printf("✅ Would have approved %s PR#%d %s", r, pr.Number, pr.Title)
 			continue
 		}
 
@@ -77,7 +76,7 @@ func handlePullRequests(dryRun bool, r string) error {
 			return fmt.Errorf("failed to approve %s %d %s - %v", r, pr.Number, pr.Title, err)
 		}
 
-		fmt.Println("\t✅ Approved PR", pr.Number, pr.Title)
+		fmt.Println("✅ Approved PR", pr.Number, pr.Title)
 	}
 
 	return nil
