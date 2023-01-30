@@ -69,7 +69,7 @@ func handlePullRequests(dryRun bool, r string) error {
 
 		if dryRun {
 			fmt.Println("\t✅ Would have approved PR", pr.Number, pr.Title)
-			return nil
+			continue
 		}
 
 		_, _, err = gh.Exec("pr", "review", fmt.Sprintf("%d", pr.Number), "--repo", r, "--approve", "--body", "@dependabot squash and merge")
