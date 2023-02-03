@@ -67,7 +67,7 @@ func handlePullRequests(dryRun bool, r string) error {
 		atomic.AddInt32(&approved, 1)
 
 		if dryRun {
-			fmt.Printf("✅ Would have approved %s PR#%d %s", r, pr.Number, pr.Title)
+			fmt.Printf("✅ Would have approved %s PR#%d %s\n", r, pr.Number, pr.Title)
 			continue
 		}
 
