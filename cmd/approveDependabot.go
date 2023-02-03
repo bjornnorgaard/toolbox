@@ -8,8 +8,8 @@ import (
 
 // approveCmd represents the approve command
 var approveCmd = &cobra.Command{
-	Use:     "approve",
-	Aliases: []string{"a"},
+	Use:     "approve-dependabot",
+	Aliases: []string{"ad"},
 	Short:   "Approves pull-requests by dependabot",
 	Long: `Approves pull-requests by dependabot
 	Only pull-requests which are passing CI 
@@ -22,7 +22,6 @@ func runApprove() func(cmd *cobra.Command, args []string) {
 		err := github.ApproveDependabotPullRequests(dryRun)
 		if err != nil {
 			fmt.Println(err)
-			return
 		}
 	}
 }
