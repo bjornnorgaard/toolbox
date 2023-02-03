@@ -2,7 +2,6 @@ package github
 
 import (
 	"fmt"
-	"github.com/cli/go-gh"
 	"sync"
 )
 
@@ -13,27 +12,29 @@ func EnableAutoMerge() error {
 	}
 
 	wg := sync.WaitGroup{}
+	enabledCount := 0
 
 	for _, repo := range repos {
 		wg.Add(1)
 		r := repo
 		go func() {
 			defer wg.Done()
-			enableAutoMergeForRepo(r)
+			err = enableAutoMergeForRepo(r)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			enabledCount++
 		}()
 	}
 
 	wg.Wait()
 
-	return nil
-}
-
-func enableAutoMergeForRepo(r repository) {
-	_, _, err := gh.Exec("repo", "edit", r.FullName, "--enable-auto-merge")
-	if err != nil {
-		fmt.Println("❌ Failed to enabled auto-merge for", r.FullName, "with error:", err)
-		return
+	if enabledCount == len(repos) {
+		fmt.Printf("🚀 Enabled auto-merge for all %d repositories\n", len(repos))
+	} else {
+		fmt.Printf("🚀 Enabled auto-merge for %d of %d total repositories\n", enabledCount, len(repos))
 	}
 
-	fmt.Printf("✅ Enabled auto-merge for %s\n", r.FullName)
+	return nil
 }

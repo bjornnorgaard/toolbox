@@ -2,7 +2,6 @@ package github
 
 import (
 	"fmt"
-	"github.com/cli/go-gh"
 	"sync"
 	"sync/atomic"
 )
@@ -31,7 +30,7 @@ func ApproveDependabotPullRequests(dryRun bool) error {
 			defer wg.Done()
 			err = handlePullRequests(dryRun, repo)
 			if err != nil {
-				fmt.Println("failed to handle pull-request for", repoName)
+				fmt.Printf("failed to handle pull-request for %s with err: %v", repoName, err)
 			}
 		}()
 	}
@@ -71,12 +70,22 @@ func handlePullRequests(dryRun bool, r string) error {
 			continue
 		}
 
-		_, _, err = gh.Exec("pr", "review", fmt.Sprintf("%d", pr.Number), "--repo", r, "--approve", "--body", "@dependabot squash and merge")
+		err = setToAutoMerge(r, pr)
 		if err != nil {
-			return fmt.Errorf("failed to approve %s %d %s - %v", r, pr.Number, pr.Title, err)
+			return err
 		}
 
-		fmt.Println("✅ Approved PR", pr.Number, pr.Title)
+		err = commentOnPR(r, pr.Number, "Set to merge automatically when requirements are meet.")
+		if err != nil {
+			return err
+		}
+
+		err = approveDependabotPR(r, pr.Number)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("✅ Approved PR#%d %s\n", pr.Number, pr.Title)
 	}
 
 	return nil
