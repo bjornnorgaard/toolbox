@@ -70,7 +70,7 @@ func handlePullRequests(dryRun bool, r string) error {
 			continue
 		}
 
-		err = setToAutoMerge(r, pr)
+		/*err = setToAutoMerge(r, pr)
 		if err != nil {
 			return err
 		}
@@ -78,7 +78,7 @@ func handlePullRequests(dryRun bool, r string) error {
 		err = commentOnPR(r, pr.Number, "Set to merge automatically when requirements are meet.")
 		if err != nil {
 			return err
-		}
+		}*/
 
 		err = approveDependabotPR(r, pr.Number)
 		if err != nil {
