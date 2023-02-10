@@ -36,6 +36,11 @@ func setToAutoMerge(r string, pr pullRequest) error {
 	if err != nil {
 		return fmt.Errorf("failed to set auto merge for repo %s with err: %v", r, err)
 	}
+
+	err = commentOnPR(r, pr.Number, "Set to merge automatically when requirements are meet.")
+	if err != nil {
+		return fmt.Errorf("failed to comment on PR after setting auto-merge: %v", err)
+	}
 	return nil
 }
 
