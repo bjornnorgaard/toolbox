@@ -2,6 +2,7 @@ package github
 
 import (
 	"fmt"
+	"log"
 	"sync"
 	"sync/atomic"
 )
@@ -70,15 +71,10 @@ func handlePullRequests(dryRun bool, r string) error {
 			continue
 		}
 
-		/*err = setToAutoMerge(r, pr)
+		err = setToAutoMerge(r, pr)
 		if err != nil {
-			return err
+			log.Printf("continuing after err: %v", err)
 		}
-
-		err = commentOnPR(r, pr.Number, "Set to merge automatically when requirements are meet.")
-		if err != nil {
-			return err
-		}*/
 
 		err = approveDependabotPR(r, pr.Number)
 		if err != nil {
