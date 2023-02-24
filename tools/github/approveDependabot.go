@@ -25,13 +25,12 @@ func ApproveDependabotPullRequests(dryRun bool) error {
 
 	for _, r := range repos {
 		wg.Add(1)
-		repoName := r.Name
-		repo := fmt.Sprintf("%s/%s", r.Owner.Login, r.Name)
+		capturedRepo := r
 		go func() {
 			defer wg.Done()
-			err = handlePullRequests(dryRun, repo)
+			err = handlePullRequests(dryRun, capturedRepo.FullName)
 			if err != nil {
-				fmt.Printf("failed to handle pull-request for %s with err: %v", repoName, err)
+				fmt.Printf("failed to handle pull-request for %s with err: %v", capturedRepo.Name, err)
 			}
 		}()
 	}
