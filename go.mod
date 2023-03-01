@@ -3,7 +3,7 @@ module github.com/bjornnorgaard/toolbox
 go 1.19
 
 require (
-	github.com/cli/go-gh v1.2.0
+	github.com/cli/go-gh v1.2.1
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.2
 )
