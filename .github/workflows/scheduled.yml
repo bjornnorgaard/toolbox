@@ -1,0 +1,23 @@
+name: Scheduled
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"
+
+env:
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  scheduled:
+    name: Handle Pull-Requests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+
+    - run: go run main.go github approve-dependabot
