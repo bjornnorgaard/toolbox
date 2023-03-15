@@ -71,7 +71,7 @@ func getRepositories() ([]repository, error) {
 func getPullRequests(repo string, filter string) ([]pullRequest, error) {
 	query := fmt.Sprintf("is:open is:pr %s", filter)
 
-	buffer, _, err := gh.Exec("pr", "list", getUserName(), "--repo", repo, "--search", query, "--json", "number,title")
+	buffer, _, err := gh.Exec("pr", "list", "--repo", repo, "--search", query, "--json", "number,title")
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch pull-requests for repo %s - %v", repo, err)
 	}
