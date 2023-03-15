@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/cli/go-gh"
+	"os"
 	"strconv"
 )
 
@@ -70,7 +71,7 @@ func getRepositories() ([]repository, error) {
 func getPullRequests(repo string, filter string) ([]pullRequest, error) {
 	query := fmt.Sprintf("is:open is:pr %s", filter)
 
-	buffer, _, err := gh.Exec("pr", "list", "bjornnorgaard", "--repo", repo, "--search", query, "--json", "number,title")
+	buffer, _, err := gh.Exec("pr", "list", getUserName(), "--repo", repo, "--search", query, "--json", "number,title")
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch pull-requests for repo %s - %v", repo, err)
 	}
@@ -81,6 +82,14 @@ func getPullRequests(repo string, filter string) ([]pullRequest, error) {
 		return nil, fmt.Errorf("failed to unmarshal pull-requests for %s - %v", repo, err)
 	}
 	return pullRequests, nil
+}
+
+func getUserName() string {
+	user := os.Getenv("USERNAME")
+	if len(user) == 0 {
+		user = "bjornnorgaard"
+	}
+	return user
 }
 
 type repository struct {
