@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/cli/go-gh"
-	"os"
 	"strconv"
 )
 
@@ -48,7 +47,7 @@ func setToAutoMerge(r string, pr pullRequest) error {
 // getRepositories fetches all repos owned by current gh cli user.
 func getRepositories() ([]repository, error) {
 	fmt.Println("🕓 Fetching list of repositories")
-	buffer, _, err := gh.Exec("repo", "list", getUserName(), "--no-archived", "--limit", "1000", "--source", "--json", "name,owner")
+	buffer, _, err := gh.Exec("repo", "list", "--no-archived", "--limit", "1000", "--source", "--json", "name,owner")
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch list of repos - %v", err)
 	}
@@ -82,14 +81,6 @@ func getPullRequests(repo string, filter string) ([]pullRequest, error) {
 		return nil, fmt.Errorf("failed to unmarshal pull-requests for %s - %v", repo, err)
 	}
 	return pullRequests, nil
-}
-
-func getUserName() string {
-	user := os.Getenv("USERNAME")
-	if len(user) == 0 {
-		user = "bjornnorgaard"
-	}
-	return user
 }
 
 type repository struct {
