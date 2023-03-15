@@ -12,7 +12,6 @@ env:
 jobs:
   scheduled:
     name: Handle pull-requests
-    permissions: write-all
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
