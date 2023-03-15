@@ -7,6 +7,7 @@ on:
 
 env:
   GH_TOKEN: ${{ github.token }}
+  USERNAME: bjornnorgaard
 
 jobs:
   scheduled:
