@@ -48,7 +48,7 @@ func setToAutoMerge(r string, pr pullRequest) error {
 // getRepositories fetches all repos owned by current gh cli user.
 func getRepositories() ([]repository, error) {
 	fmt.Println("🕓 Fetching list of repositories")
-	buffer, _, err := gh.Exec("repo", "list", "--no-archived", "--limit", "1000", "--source", "--json", "name,owner")
+	buffer, _, err := gh.Exec("repo", "list", getUserName(), "--no-archived", "--limit", "1000", "--source", "--json", "name,owner")
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch list of repos - %v", err)
 	}
