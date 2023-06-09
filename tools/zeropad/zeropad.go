@@ -2,6 +2,7 @@ package zeropad
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -15,36 +16,31 @@ func CurrentDir(root string) error {
 
 	_, err := os.Stat(root)
 	if err != nil {
-		return fmt.Errorf("invalid root dir: %v", err)
-	}
-
-	files, err := os.ReadDir(root)
-	if err != nil {
 		return err
 	}
 
-	for _, entry := range files {
-		if entry.IsDir() {
-			err = CurrentDir(entry.Name())
-			if err != nil {
-				return fmt.Errorf("recursive call failed: %v", err)
-			}
-		}
+	var (
+		paddedPath string
+		newPath    string
+	)
 
-		if !isImageFile(entry.Name()) {
-			continue
-		}
-
-		newName := zeroPadFileName(entry.Name())
-		newPath := filepath.Join(root, newName)
-
-		err = os.Rename(filepath.Join(root, entry.Name()), newPath)
+	return filepath.WalkDir(root, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
-	}
 
-	return nil
+		if !isImageFile(path) {
+			return err
+		}
+
+		paddedPath, err = zeroPadFileName(info.Name())
+		if err != nil {
+			return err
+		}
+
+		newPath = strings.ReplaceAll(path, info.Name(), paddedPath)
+		return os.Rename(path, newPath)
+	})
 }
 
 func isImageFile(fileName string) bool {
@@ -60,13 +56,12 @@ func isImageFile(fileName string) bool {
 	return false
 }
 
-func zeroPadFileName(fileName string) string {
+func zeroPadFileName(fileName string) (string, error) {
 	fileNameWithoutExt := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 	fileNumber, err := strconv.Atoi(fileNameWithoutExt)
 	if err != nil {
-		err = fmt.Errorf("failed to convert string to int: %v", err)
-		panic(err)
+		return "", fmt.Errorf("failed to convert string to int: %v", err)
 	}
 	paddedName := fmt.Sprintf("%04d", fileNumber)
-	return paddedName + filepath.Ext(fileName)
+	return paddedName + filepath.Ext(fileName), nil
 }
