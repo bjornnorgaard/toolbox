@@ -1,6 +1,6 @@
 module github.com/bjornnorgaard/toolbox
 
-go 1.19
+go 1.21
 
 require (
 	github.com/cli/go-gh v1.2.1
