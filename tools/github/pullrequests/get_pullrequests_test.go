@@ -1,24 +1,18 @@
-package github
+package pullrequests
 
 import (
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
-func TestGetPullRequests(t *testing.T) {
-	listPR, err := getPullRequestsV1("bjornnorgaard/toolbox", "")
-	require.NoErrorf(t, err, "failed to get pull requests: %v", err)
-	require.NotNilf(t, listPR, "expected pull requests to not be nil")
-}
-
-func TestGetPullRequestsV2(t *testing.T) {
+func TestPullRequests(t *testing.T) {
 	c := 7
 
-	list, err := getprs(
+	list, err := Get(
 		withLimit(uint(c)),
-		isClosed(),
-		isSucceeding(),
-		isNotApproved(),
+		withStateClosed(),
+		withChecksSucceeded(),
+		withReviewNotApproved(),
 	)
 
 	require.NoErrorf(t, err, "failed to get pull requests: %v", err)

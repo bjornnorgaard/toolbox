@@ -7,16 +7,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	method = ""
+	char   = ""
+)
+
 func init() {
 	rootCmd.AddCommand(replaceCmd)
 	replaceCmd.Flags().StringVarP(&char, "char", "c", "X", "the replacement char")
 	replaceCmd.Flags().StringVarP(&method, "method", "m", "", "the method to print replaced")
 }
-
-var (
-	method = ""
-	char   = ""
-)
 
 // replaceCmd represents the replace command
 var replaceCmd = &cobra.Command{

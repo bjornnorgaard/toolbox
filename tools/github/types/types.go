@@ -1,22 +1,8 @@
-package github
+package types
 
 import "time"
 
-type repository struct {
-	FullName string
-	Name     string `json:"name"`
-	Owner    struct {
-		Id    string `json:"id"`
-		Login string `json:"login"`
-	} `json:"owner"`
-}
-
-type PullRequestsV1 struct {
-	Number int    `json:"number"`
-	Title  string `json:"title"`
-}
-
-type PullRequest struct {
+type PR struct {
 	Author              string    `json:"author"`
 	CreatedAt           time.Time `json:"createdAt"`
 	Id                  string    `json:"id"`
@@ -26,4 +12,16 @@ type PullRequest struct {
 	State               string    `json:"state"`
 	Title               string    `json:"title"`
 	UpdatedAt           time.Time `json:"updatedAt"`
+}
+
+type Repo struct {
+	CreatedAt   time.Time `json:"createdAt"`
+	Description string    `json:"description"`
+	FullName    string    `json:"fullName"`
+	ID          string    `json:"id"`
+	Name        string    `json:"name"`
+	Owner       string    `json:"owner"`
+	OwnerID     string    `json:"ownerId"`
+	URL         string    `json:"url"`
+	Visibility  string    `json:"visibility"`
 }

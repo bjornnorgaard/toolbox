@@ -2,35 +2,45 @@ package github
 
 import (
 	"fmt"
-	"log"
+	"github.com/bjornnorgaard/toolbox/tools/github/pullrequests"
+	"github.com/bjornnorgaard/toolbox/tools/github/review"
+	"strings"
+	"time"
 )
 
 func Approve(dry bool) error {
 	if dry {
-		log.Printf("🐵 Dry run enabled")
+		fmt.Println("🐵 Dry run enabled, no write actions will be performed")
 	}
 
-	log.Printf("🕓 Fetching pull requests...")
-	prs, err := getprs()
+	fmt.Println("🕓 Fetching pull requests...")
+	prs, err := pullrequests.Get()
 	if err != nil {
-		return fmt.Errorf("failed to fetch pull requests: %w", err)
+		return fmt.Errorf("🔥 Failed to fetch pull requests: %w", err)
 	}
 
 	if len(prs) == 0 {
-		log.Printf("👍 No pull requests to approve")
+		fmt.Println("👍 No pull requests to approve")
 		return nil
 	}
 
-	log.Printf("👀 Loaded %d pull requests", len(prs))
+	fmt.Printf("👀 Loaded %d pull requests\n", len(prs))
 
-	for _, pr := range prs {
-		if err = approve(pr); err != nil {
-			return fmt.Errorf("failed to approve pull request: %w", err)
+	for i, pr := range prs {
+		if err = review.ApproveSquash(pr); err != nil {
+			messages := []string{
+				fmt.Sprintf("❌ Failed to approve pull request #%d of %d", i+1, len(prs)),
+				fmt.Sprintf("   #%s %s", pr.Title, pr.RepositoryWithOwner),
+				fmt.Sprintf("   %d authored by %s created %v", pr.Number, pr.Author, pr.CreatedAt.Format(time.DateTime)),
+			}
+
+			return fmt.Errorf(strings.Join(messages, "\n"))
 		}
 
-		log.Printf("✅ Approved %s PR#%d '%s' created by %s", pr.RepositoryWithOwner, pr.Number, pr.Title, pr.Author)
+		fmt.Printf("✅ Approved %s PR#%d '%s' created by %s\n", pr.RepositoryWithOwner, pr.Number, pr.Title, pr.Author)
 	}
 
-	log.Printf("🚀 Approved %d pull requests", len(prs))
+	fmt.Printf("🚀 Approved %d pull requests\n", len(prs))
+
 	return nil
 }
