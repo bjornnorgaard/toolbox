@@ -1,9 +1,7 @@
-# toolbox
-
+# Toolbox
 A collection of various tools.
 
 ## Installation
-
 If Go is installed:
 
 ```sh
