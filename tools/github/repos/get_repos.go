@@ -3,6 +3,7 @@ package repos
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/bjornnorgaard/toolbox/tools/github/curuser"
 	"github.com/bjornnorgaard/toolbox/tools/github/types"
 	"github.com/bjornnorgaard/toolbox/utils/jqexp"
 	"github.com/cli/go-gh"
@@ -51,7 +52,7 @@ func GetRepos(applies ...optsApply) ([]types.Repo, error) {
 
 	buffer, _, err := gh.Exec("search", "repos",
 		fmt.Sprintf("--limit=%d", opts.limit),
-		fmt.Sprintf("--owner=%s", "@me"),
+		fmt.Sprintf("--owner=%s", curuser.Me()),
 		fmt.Sprintf("--json=%s", strings.Join(fields, ",")),
 		fmt.Sprintf("--jq=%s", jq),
 	)

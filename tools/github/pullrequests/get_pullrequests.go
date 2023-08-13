@@ -3,6 +3,7 @@ package pullrequests
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/bjornnorgaard/toolbox/tools/github/curuser"
 	"github.com/bjornnorgaard/toolbox/tools/github/types"
 	"github.com/bjornnorgaard/toolbox/utils/jqexp"
 	"github.com/cli/go-gh"
@@ -134,7 +135,7 @@ func Get(applies ...optsApply) ([]types.PR, error) {
 		fmt.Sprintf("--state=%s", opts.state),
 		fmt.Sprintf("--review=%s", opts.review),
 		fmt.Sprintf("--limit=%d", opts.limit),
-		fmt.Sprintf("--owner=%s", "@me"),
+		fmt.Sprintf("--owner=%s", curuser.Me()),
 		fmt.Sprintf("--json=%s", strings.Join(fields, ",")),
 		fmt.Sprintf("--jq=%s", jq),
 	)
