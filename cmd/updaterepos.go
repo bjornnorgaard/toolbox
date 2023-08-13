@@ -15,7 +15,8 @@ var (
 	updateReposCmd = &cobra.Command{
 		Use:     "update-repos",
 		Aliases: []string{"ur"},
-		Short:   "Enables auto-merge and some other stuff for all repos owner by current user",
+		Short:   "Enables repo settings I like",
+		Long:    "Enables auto-merge, squash merge and automatic branch deletion after merge",
 		Run:     runUpdateRepos(),
 	}
 )

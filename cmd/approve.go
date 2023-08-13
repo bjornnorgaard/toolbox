@@ -18,9 +18,9 @@ var (
 
 	// approveCmd represents the runApprove command
 	approveCmd = &cobra.Command{
-		Use:     "approve-dependabot-pulls",
+		Use:     "approve-dependabot",
 		Aliases: []string{"approve", "ad", "a"},
-		Short:   "Approves pull-requests by dependabot",
+		Short:   "Approves dependabot pull requests",
 		Long: "Approves pull-requests by dependabot.\n" +
 			"Will only approve pull requests which are passing CI checks\n" +
 			"and not already reviewed",
