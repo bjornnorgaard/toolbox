@@ -11,8 +11,6 @@ func Me() string {
 		return "@me"
 	}
 
-	log.Printf("Detected CI env, continuing with repo owner as user")
-
 	user := os.Getenv("GITHUB_REPOSITORY_OWNER")
 	if len(user) == 0 {
 		log.Fatalf("'GITHUB_REPOSITORY_OWNER' env var is not set")
