@@ -12,11 +12,12 @@ var (
 	approved int32
 )
 
-func ApproveDependabotPullRequests(dryRun bool) error {
+func ApproveV1(dryRun bool) error {
 	if dryRun {
-		fmt.Println("🐵 Dry run enabled")
+		log.Println("🐵 Dry run enabled")
 	}
-	repos, err := getRepositories()
+
+	repos, err := getRepos()
 	if err != nil {
 		return err
 	}
@@ -51,7 +52,7 @@ func ApproveDependabotPullRequests(dryRun bool) error {
 }
 
 func handlePullRequests(dryRun bool, r string) error {
-	pullRequests, err := getPullRequests(r, "-status:failure -review:approved author:app/dependabot")
+	pullRequests, err := getPullRequestsV1(r, "author:app/dependabot")
 	if err != nil {
 		return err
 	}
@@ -75,7 +76,7 @@ func handlePullRequests(dryRun bool, r string) error {
 			log.Printf("continuing after err: %v", err)
 		}
 
-		err = approveDependabotPR(r, pr.Number)
+		err = approveDependabotPRV1(r, pr.Number)
 		if err != nil {
 			return err
 		}

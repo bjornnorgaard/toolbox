@@ -6,7 +6,7 @@ import (
 )
 
 func EnableAutoMerge() error {
-	repos, err := getRepositories()
+	repos, err := getRepos()
 	if err != nil {
 		return err
 	}
