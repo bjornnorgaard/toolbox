@@ -16,7 +16,7 @@ var (
 		Use:     "update-repos",
 		Aliases: []string{"ur"},
 		Short:   "Enables repo settings I like",
-		Long:    "Enables auto-merge, squash merge and automatic branch deletion after merge",
+		Long:    "Enables auto-merge, squash merge, branch update on PR and automatic branch deletion after merge",
 		Run:     runUpdateRepos(),
 	}
 )
