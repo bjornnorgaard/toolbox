@@ -2,6 +2,7 @@ package repoedit
 
 import (
 	"fmt"
+
 	"github.com/bjornnorgaard/toolbox/tools/github/types"
 	"github.com/cli/go-gh"
 )
@@ -10,6 +11,7 @@ const (
 	enableAutoMerge     = "--enable-auto-merge"
 	deleteBranchOnMerge = "--delete-branch-on-merge"
 	enableSquashMerge   = "--enable-squash-merge"
+	allowUpdateBranch   = "--allow-update-branch"
 )
 
 type optsApply func(o *optsType)
@@ -37,6 +39,12 @@ func WithDeleteBranchOnMerge() optsApply {
 func WithEnableSquashMerge() optsApply {
 	return func(o *optsType) {
 		o.flags = append(o.flags, enableSquashMerge)
+	}
+}
+
+func WithAllowUpdateBranch() optsApply {
+	return func(o *optsType) {
+		o.flags = append(o.flags, allowUpdateBranch)
 	}
 }
 

@@ -2,6 +2,7 @@ package github
 
 import (
 	"fmt"
+
 	"github.com/bjornnorgaard/toolbox/tools/github/repoedit"
 	"github.com/bjornnorgaard/toolbox/tools/github/repos"
 )
@@ -16,6 +17,7 @@ func UpdateRepos() error {
 		err = repoedit.Update(repo,
 			repoedit.WithEnableAutoMerge(),
 			repoedit.WithEnableSquashMerge(),
+			repoedit.WithAllowUpdateBranch(),
 			repoedit.WithDeleteBranchOnMerge())
 
 		if err != nil {
