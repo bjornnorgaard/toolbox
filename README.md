@@ -5,7 +5,7 @@ A collection of various tools.
 If Go is installed:
 
 ```sh
-go install github.com/bjornnorgaard/toolbox
+go install github.com/bjornnorgaard/toolbox@latest
 ```
 
 ## Kobra CLI
