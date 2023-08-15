@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"github.com/bjornnorgaard/toolbox/tools/github/pullrequests"
 	"github.com/bjornnorgaard/toolbox/tools/github/review"
-	"strings"
-	"time"
+	"sync"
 )
 
 func Approve() error {
@@ -22,21 +21,35 @@ func Approve() error {
 
 	fmt.Printf("👀 Loaded %d pull requests\n", len(prs))
 
-	for i, pr := range prs {
-		if err = review.ApproveSquash(pr); err != nil {
-			messages := []string{
-				fmt.Sprintf("❌ Failed to approve pull request #%d of %d", i+1, len(prs)),
-				fmt.Sprintf("   #%s %s", pr.Title, pr.RepositoryWithOwner),
-				fmt.Sprintf("   %d authored by %s created %v", pr.Number, pr.Author, pr.CreatedAt.Format(time.DateTime)),
+	wg := sync.WaitGroup{}
+	errCh := make(chan error, len(prs))
+
+	for _, pr := range prs {
+		capPR := pr
+
+		go func() {
+			wg.Add(1)
+			defer wg.Done()
+
+			if err = review.ApproveSquash(pr); err != nil {
+				errCh <- fmt.Errorf("❗️Failed to approve %s PR#%d '%s'", capPR.Repository, capPR.Number, capPR.Title)
+				return
 			}
 
-			return fmt.Errorf(strings.Join(messages, "\n"))
-		}
+			fmt.Printf("✅ Approved %s PR#%d '%s' created by %s\n", pr.RepositoryWithOwner, pr.Number, pr.Title, pr.Author)
+		}()
+	}
 
-		fmt.Printf("✅ Approved %s PR#%d '%s' created by %s\n", pr.RepositoryWithOwner, pr.Number, pr.Title, pr.Author)
+	wg.Wait()
+
+	close(errCh)
+	if 0 < len(errCh) {
+		for err = range errCh {
+			fmt.Println(err)
+		}
+		return fmt.Errorf("💀 Failed to approve %d pull requests", len(errCh))
 	}
 
 	fmt.Printf("🚀 Approved %d pull requests\n", len(prs))
-
 	return nil
 }

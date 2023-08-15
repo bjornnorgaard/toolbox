@@ -8,10 +8,17 @@ import (
 )
 
 const (
+	off = "--flag=false"
+
 	enableAutoMerge     = "--enable-auto-merge"
 	deleteBranchOnMerge = "--delete-branch-on-merge"
 	enableSquashMerge   = "--enable-squash-merge"
-	allowUpdateBranch   = "--allow-update-branch"
+	showUpdateBranch    = "--allow-update-branch"
+
+	disableAutoMerge   = "--enable-auto-merge" + " " + off
+	keepBranchOnMerge  = "--delete-branch-on-merge" + " " + off
+	disableSquashMerge = "--enable-squash-merge" + " " + off
+	NoUpdateBranch     = "--allow-update-branch" + " " + off
 )
 
 type optsApply func(o *optsType)
@@ -42,9 +49,33 @@ func WithEnableSquashMerge() optsApply {
 	}
 }
 
-func WithAllowUpdateBranch() optsApply {
+func WithShowUpdateBranch() optsApply {
 	return func(o *optsType) {
-		o.flags = append(o.flags, allowUpdateBranch)
+		o.flags = append(o.flags, showUpdateBranch)
+	}
+}
+
+func WithDisableAutoMerge() optsApply {
+	return func(o *optsType) {
+		o.flags = append(o.flags, disableAutoMerge)
+	}
+}
+
+func WithKeepBranchOnMerge() optsApply {
+	return func(o *optsType) {
+		o.flags = append(o.flags, keepBranchOnMerge)
+	}
+}
+
+func WithDisableSquashMerge() optsApply {
+	return func(o *optsType) {
+		o.flags = append(o.flags, disableSquashMerge)
+	}
+}
+
+func WithHiddenUpdateBranch() optsApply {
+	return func(o *optsType) {
+		o.flags = append(o.flags, NoUpdateBranch)
 	}
 }
 

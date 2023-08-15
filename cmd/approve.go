@@ -29,7 +29,7 @@ var (
 func runApprove() func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
 		if err := github.Approve(); err != nil {
-			fmt.Printf("❌ Approve failed: %v", err)
+			fmt.Println(err)
 		}
 	}
 }

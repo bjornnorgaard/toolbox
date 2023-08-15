@@ -25,7 +25,7 @@ func runUpdateRepos() func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
 		err := github.UpdateRepos()
 		if err != nil {
-			fmt.Printf("❌ Failed to update repos: %v", err)
+			fmt.Println(err)
 		}
 	}
 }

@@ -23,7 +23,7 @@ func runGithub() func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
 		err := github.Github()
 		if err != nil {
-			fmt.Printf("❌ GitHub failed: %v", err)
+			fmt.Println(err)
 		}
 	}
 }
