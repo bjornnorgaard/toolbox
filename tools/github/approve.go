@@ -8,11 +8,7 @@ import (
 	"time"
 )
 
-func Approve(dry bool) error {
-	if dry {
-		fmt.Println("🐵 Dry run enabled, no write actions will be performed")
-	}
-
+func Approve() error {
 	fmt.Println("🕓 Fetching pull requests...")
 	prs, err := pullrequests.Get()
 	if err != nil {
