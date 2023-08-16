@@ -33,6 +33,7 @@ func UpdateRepos() error {
 			updateErr := repoedit.Update(repo,
 				repoedit.WithEnableAutoMerge(),
 				repoedit.WithEnableSquashMerge(),
+				repoedit.WithDisableMergeCommit(),
 				repoedit.WithShowUpdateBranch(),
 				repoedit.WithDeleteBranchOnMerge())
 

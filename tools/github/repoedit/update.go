@@ -13,12 +13,14 @@ const (
 	enableAutoMerge     = "--enable-auto-merge"
 	deleteBranchOnMerge = "--delete-branch-on-merge"
 	enableSquashMerge   = "--enable-squash-merge"
+	enableMergeCommit   = "--enable-merge-commit"
 	showUpdateBranch    = "--allow-update-branch"
 
-	disableAutoMerge   = "--enable-auto-merge" + " " + off
-	keepBranchOnMerge  = "--delete-branch-on-merge" + " " + off
-	disableSquashMerge = "--enable-squash-merge" + " " + off
-	NoUpdateBranch     = "--allow-update-branch" + " " + off
+	disableAutoMerge   = enableAutoMerge + " " + off
+	keepBranchOnMerge  = deleteBranchOnMerge + " " + off
+	disableSquashMerge = enableSquashMerge + " " + off
+	disableMergeCommit = enableMergeCommit + " " + off
+	NoUpdateBranch     = showUpdateBranch + " " + off
 )
 
 type optsApply func(o *optsType)
@@ -70,6 +72,12 @@ func WithKeepBranchOnMerge() optsApply {
 func WithDisableSquashMerge() optsApply {
 	return func(o *optsType) {
 		o.flags = append(o.flags, disableSquashMerge)
+	}
+}
+
+func WithDisableMergeCommit() optsApply {
+	return func(o *optsType) {
+		o.flags = append(o.flags, disableMergeCommit)
 	}
 }
 
