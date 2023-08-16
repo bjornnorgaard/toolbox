@@ -5,6 +5,7 @@ import (
 	"github.com/bjornnorgaard/toolbox/tools/github/repoedit"
 	"github.com/bjornnorgaard/toolbox/tools/github/repos"
 	"sync"
+	"sync/atomic"
 )
 
 func UpdateRepos(dryRun bool) error {
@@ -17,7 +18,7 @@ func UpdateRepos(dryRun bool) error {
 	fmt.Printf("👍 Found %d repositories\n", len(repositories))
 
 	wg := sync.WaitGroup{}
-	errCh := make(chan error, len(repositories))
+	successCount := uint32(len(repositories))
 
 	for _, doNotUseRepo := range repositories {
 		repo := doNotUseRepo
@@ -26,11 +27,10 @@ func UpdateRepos(dryRun bool) error {
 		go func() {
 			defer wg.Done()
 
-			updateErr := repoedit.Update(repo)
-			if updateErr != nil {
-				updateErr = fmt.Errorf("🔥 Error for '%s': %w", repo.FullName, updateErr)
-				fmt.Println(updateErr)
-				errCh <- updateErr
+			err = repoedit.Update(repo, repoedit.WithDebug(dryRun))
+			if err != nil {
+				fmt.Printf("🔥 Error for '%s': %v\n", repo.FullName, err)
+				atomic.AddUint32(&successCount, -1)
 				return
 			}
 
@@ -39,15 +39,13 @@ func UpdateRepos(dryRun bool) error {
 	}
 
 	wg.Wait()
-	close(errCh)
 
-	if _, hasErrors := <-errCh; hasErrors {
-		for err = range errCh {
-			fmt.Println(err)
-		}
-		return fmt.Errorf("💀 Failed to update one or more repos")
+	if int(successCount) != len(repositories) {
+		fmt.Printf("🔥 Failed to update %d repos\n", len(repositories)-int(successCount))
+	}
+	if 0 < successCount {
+		fmt.Printf("🚀 Updated %d repos\n", successCount)
 	}
 
-	fmt.Printf("🚀 Successfully updated %d repos\n", len(repositories))
 	return nil
 }

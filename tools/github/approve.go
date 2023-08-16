@@ -5,7 +5,7 @@ import (
 	"github.com/bjornnorgaard/toolbox/tools/github/pullrequests"
 	"github.com/bjornnorgaard/toolbox/tools/github/review"
 	"sync"
-	"time"
+	"sync/atomic"
 )
 
 func Approve() error {
@@ -23,7 +23,7 @@ func Approve() error {
 	fmt.Printf("👀 Loaded %d pull requests\n", len(prs))
 
 	wg := sync.WaitGroup{}
-	errCh := make(chan error, len(prs))
+	successCount := uint32(len(prs))
 
 	for _, doNotUse := range prs {
 		pr := doNotUse
@@ -32,30 +32,24 @@ func Approve() error {
 		go func() {
 			defer wg.Done()
 
-			time.Sleep(100 * time.Millisecond)
-
-			reviewErr := review.ApproveSquash(pr)
-			if reviewErr != nil {
-				reviewErr = fmt.Errorf("❗️Failed to approve %s PR#%d '%s': %w", pr.Repository, pr.Number, pr.Title, reviewErr)
-				fmt.Println(reviewErr)
-				errCh <- reviewErr
+			if err = review.ApproveSquash(pr); err != nil {
+				fmt.Printf("❗️Failed to approve %s PR#%d '%s': %v\n", pr.Repository, pr.Number, pr.Title, err)
+				atomic.AddUint32(&successCount, -1)
 				return
 			}
 
-			fmt.Printf("✅ Approved %s PR#%d '%s' created by %s\n", pr.RepositoryWithOwner, pr.Number, pr.Title, pr.Author)
+			fmt.Printf("✅ Approved %s PR#%d '%s'\n", pr.Repository, pr.Number, pr.Title)
 		}()
 	}
 
 	wg.Wait()
-	close(errCh)
 
-	if _, hasErrors := <-errCh; hasErrors {
-		for err = range errCh {
-			fmt.Println(err)
-		}
-		return fmt.Errorf("💀 Failed to approve one or more pull requests")
+	if int(successCount) != len(prs) {
+		fmt.Printf("🔥 Failed to approve %d pull requests", len(prs)-int(successCount))
+	}
+	if 0 < successCount {
+		fmt.Printf("🚀 Approved %d pull requests\n", successCount)
 	}
 
-	fmt.Printf("🚀 Approved %d pull requests\n", len(prs))
 	return nil
 }
