@@ -25,14 +25,14 @@ func Approve() error {
 	errCh := make(chan error, len(prs))
 
 	for _, pr := range prs {
-		capPR := pr
+		p := pr
 
 		go func() {
 			wg.Add(1)
 			defer wg.Done()
 
-			if err = review.ApproveSquash(pr); err != nil {
-				errCh <- fmt.Errorf("❗️Failed to approve %s PR#%d '%s'", capPR.Repository, capPR.Number, capPR.Title)
+			if err = review.ApproveSquash(p); err != nil {
+				errCh <- fmt.Errorf("❗️Failed to approve %s PR#%d '%s'", p.Repository, p.Number, p.Title)
 				return
 			}
 
