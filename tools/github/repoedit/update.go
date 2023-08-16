@@ -8,21 +8,8 @@ import (
 )
 
 func Update(repo types.Repo, appliers ...OptsApply) error {
-	opts := &optsType{
-		debug: false,
-		settings: map[RepoSetting]bool{
-			SettingDeleteBranchOnMerge: true,
-			SettingEnableSquashMerge:   true,
-			SettingEnableRebaseMerge:   true,
-			SettingAllowUpdateBranch:   true,
-			SettingEnableAutoMerge:     true,
-			SettingEnableIssues:        true,
-			SettingEnableDiscussions:   false,
-			SettingEnableMergeCommit:   false,
-			SettingEnableProjects:      false,
-			SettingEnableWiki:          false,
-		},
-	}
+	defaultOpts := DefaultOpts()
+	opts := &defaultOpts
 
 	for _, applier := range appliers {
 		applier(opts)
@@ -44,6 +31,24 @@ func Update(repo types.Repo, appliers ...OptsApply) error {
 	}
 
 	return nil
+}
+
+func DefaultOpts() OptsType {
+	return OptsType{
+		debug: false,
+		settings: map[RepoSetting]bool{
+			SettingDeleteBranchOnMerge: true,
+			SettingEnableSquashMerge:   true,
+			SettingEnableRebaseMerge:   true,
+			SettingAllowUpdateBranch:   true,
+			SettingEnableAutoMerge:     true,
+			SettingEnableIssues:        true,
+			SettingEnableDiscussions:   false,
+			SettingEnableMergeCommit:   false,
+			SettingEnableProjects:      false,
+			SettingEnableWiki:          false,
+		},
+	}
 }
 
 type RepoSetting string
@@ -80,21 +85,21 @@ const (
 	SettingEnableWiki RepoSetting = "--enable-wiki"
 )
 
-type optsType struct {
+type OptsType struct {
 	debug    bool
 	settings map[RepoSetting]bool
 }
 
-type OptsApply func(o *optsType)
+type OptsApply func(o *OptsType)
 
-func WithDebug() OptsApply {
-	return func(o *optsType) {
-		o.debug = true
+func WithDebug(enabled bool) OptsApply {
+	return func(o *OptsType) {
+		o.debug = enabled
 	}
 }
 
 func With(setting RepoSetting, enabled bool) OptsApply {
-	return func(o *optsType) {
+	return func(o *OptsType) {
 		o.settings[setting] = enabled
 	}
 }

@@ -7,14 +7,14 @@ import (
 	"sync"
 )
 
-func UpdateRepos() error {
-	fmt.Printf("🔍 Fetching repos\n")
+func UpdateRepos(dryRun bool) error {
+	fmt.Printf("🔍 Fetching repos...\n")
 	repositories, err := repos.GetRepos()
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("🔧 Updating %d repos\n", len(repositories))
+	fmt.Printf("🔧 Found %d repositories\n", len(repositories))
 
 	wg := sync.WaitGroup{}
 	errCh := make(chan error, len(repositories)*2)
@@ -26,14 +26,16 @@ func UpdateRepos() error {
 			wg.Add(1)
 			defer wg.Done()
 
-			if updateErr := repoedit.Update(repo); updateErr != nil {
+			updateErr := repoedit.Update(repo, repoedit.WithDebug(dryRun))
+
+			if updateErr != nil {
 				updateErr = fmt.Errorf("🔥 Failed to update '%s': %w", repo.FullName, updateErr)
 				fmt.Println(updateErr)
 				errCh <- updateErr
 				return
 			}
 
-			fmt.Printf("✅ Updated repo %s\n", repo.FullName)
+			fmt.Printf("✅ Updated %s\n", repo.FullName)
 		}()
 	}
 

@@ -7,8 +7,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var ()
-
 func init() {
 	githubCmd.AddCommand(approveCmd)
 }

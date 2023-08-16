@@ -8,9 +8,14 @@ import (
 
 func init() {
 	githubCmd.AddCommand(updateReposCmd)
+	updateReposCmd.Flags().BoolVarP(&dryRun, "dry-run", "n", false, "only fetch and print intentions, no write actions performed")
+
 }
 
 var (
+	// Flags
+	dryRun bool
+
 	// updateReposCmd represents the enableAutoMerge command
 	updateReposCmd = &cobra.Command{
 		Use:     "update-repos",
@@ -23,7 +28,7 @@ var (
 
 func runUpdateRepos() func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
-		err := github.UpdateRepos()
+		err := github.UpdateRepos(dryRun)
 		if err != nil {
 			fmt.Println(err)
 		}
