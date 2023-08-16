@@ -24,15 +24,16 @@ func Approve() error {
 	wg := sync.WaitGroup{}
 	errCh := make(chan error, len(prs))
 
-	for _, pr := range prs {
-		p := pr
+	for _, doNotUse := range prs {
+		pr := doNotUse
 
 		go func() {
 			wg.Add(1)
 			defer wg.Done()
 
-			if err = review.ApproveSquash(p); err != nil {
-				errCh <- fmt.Errorf("❗️Failed to approve %s PR#%d '%s'", p.Repository, p.Number, p.Title)
+			reviewErr := review.ApproveSquash(pr)
+			if reviewErr != nil {
+				errCh <- fmt.Errorf("❗️Failed to approve %s PR#%d '%s'", pr.Repository, pr.Number, pr.Title)
 				return
 			}
 
@@ -41,13 +42,13 @@ func Approve() error {
 	}
 
 	wg.Wait()
-
 	close(errCh)
-	if 0 < len(errCh) {
+
+	if _, hasErrors := <-errCh; hasErrors {
 		for err = range errCh {
 			fmt.Println(err)
 		}
-		return fmt.Errorf("💀 Failed to approve %d pull requests", len(errCh))
+		return fmt.Errorf("💀 Failed to approve one or more pull requests")
 	}
 
 	fmt.Printf("🚀 Approved %d pull requests\n", len(prs))

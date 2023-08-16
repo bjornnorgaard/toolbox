@@ -20,40 +20,40 @@ func UpdateRepos() error {
 	wg := sync.WaitGroup{}
 	errCh := make(chan error, len(repositories))
 
-	for index, repo := range repositories {
+	for doNotUseIndex, doNotUseRepo := range repositories {
 		var (
-			i = index + 1
-			r = repo
+			i    = doNotUseIndex + 1
+			repo = doNotUseRepo
 		)
 
 		go func() {
 			wg.Add(1)
 			defer wg.Done()
 
-			err = repoedit.Update(r,
+			updateErr := repoedit.Update(repo,
 				repoedit.WithEnableAutoMerge(),
 				repoedit.WithEnableSquashMerge(),
 				repoedit.WithShowUpdateBranch(),
 				repoedit.WithDeleteBranchOnMerge())
 
-			if err != nil {
-				err = fmt.Errorf("🔥 Failed to update repo '%s': %w", r.FullName, err)
-				errCh <- err
+			if updateErr != nil {
+				updateErr = fmt.Errorf("🔥 Failed to update repo '%s': %w", repo.FullName, updateErr)
+				errCh <- updateErr
 				return
 			}
 
-			fmt.Printf("✅ Updated repo %s %d of %d\n", r.FullName, i, len(repositories))
+			fmt.Printf("✅ Updated repo %s %d of %d\n", repo.FullName, i, len(repositories))
 		}()
 	}
 
 	wg.Wait()
-
 	close(errCh)
-	if 0 < len(errCh) {
+
+	if _, hasErrors := <-errCh; hasErrors {
 		for err = range errCh {
 			fmt.Println(err)
 		}
-		return fmt.Errorf("💀 Failed to update %d repos", len(errCh))
+		return fmt.Errorf("💀 Failed to update one or more repos")
 	}
 
 	fmt.Printf("🚀 Successfully updated %d repos\n", len(repositories))

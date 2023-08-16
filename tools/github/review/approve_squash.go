@@ -13,9 +13,10 @@ const (
 func ApproveSquash(pr types.PR) error {
 	_, _, err := gh.Exec("pr", "review",
 		fmt.Sprintf("%d", pr.Number),
-		fmt.Sprintf("--repo=%s", pr.RepositoryWithOwner),
+		fmt.Sprintf("%s", "--approve"),
 		fmt.Sprintf("--body=%s", dependabotSquash),
-		"--approve")
+		fmt.Sprintf("--repo=%s", pr.RepositoryWithOwner),
+	)
 
 	if err != nil {
 		return err
