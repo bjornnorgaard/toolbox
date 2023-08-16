@@ -5,6 +5,7 @@ import (
 	"github.com/bjornnorgaard/toolbox/tools/github/pullrequests"
 	"github.com/bjornnorgaard/toolbox/tools/github/review"
 	"sync"
+	"time"
 )
 
 func Approve() error {
@@ -31,9 +32,13 @@ func Approve() error {
 			wg.Add(1)
 			defer wg.Done()
 
+			time.Sleep(50 * time.Millisecond)
+
 			reviewErr := review.ApproveSquash(pr)
 			if reviewErr != nil {
-				errCh <- fmt.Errorf("❗️Failed to approve %s PR#%d '%s'", pr.Repository, pr.Number, pr.Title)
+				reviewErr = fmt.Errorf("❗️Failed to approve %s PR#%d '%s': %w", pr.Repository, pr.Number, pr.Title, reviewErr)
+				fmt.Println(reviewErr)
+				errCh <- reviewErr
 				return
 			}
 
