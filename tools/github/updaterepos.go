@@ -2,10 +2,9 @@ package github
 
 import (
 	"fmt"
-	"sync"
-
 	"github.com/bjornnorgaard/toolbox/tools/github/repoedit"
 	"github.com/bjornnorgaard/toolbox/tools/github/repos"
+	"sync"
 )
 
 func UpdateRepos() error {
@@ -18,7 +17,7 @@ func UpdateRepos() error {
 	fmt.Printf("🔧 Updating %d repos\n", len(repositories))
 
 	wg := sync.WaitGroup{}
-	errCh := make(chan error, len(repositories))
+	errCh := make(chan error, len(repositories)*2)
 
 	for doNotUseIndex, doNotUseRepo := range repositories {
 		var (
@@ -31,14 +30,13 @@ func UpdateRepos() error {
 			defer wg.Done()
 
 			updateErr := repoedit.Update(repo,
-				repoedit.WithEnableAutoMerge(),
-				repoedit.WithEnableSquashMerge(),
-				repoedit.WithDisableMergeCommit(),
-				repoedit.WithShowUpdateBranch(),
-				repoedit.WithDeleteBranchOnMerge())
+				// repoedit.WithDebug(),
+				repoedit.With(repoedit.SettingEnableMergeCommit, false),
+			)
 
 			if updateErr != nil {
-				updateErr = fmt.Errorf("🔥 Failed to update repo '%s': %w", repo.FullName, updateErr)
+				updateErr = fmt.Errorf("🔥 Failed to update '%s': %w", repo.FullName, updateErr)
+				fmt.Println(updateErr)
 				errCh <- updateErr
 				return
 			}

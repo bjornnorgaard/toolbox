@@ -7,102 +7,94 @@ import (
 	"github.com/cli/go-gh"
 )
 
-const (
-	off = "--flag=false"
-
-	enableAutoMerge     = "--enable-auto-merge"
-	deleteBranchOnMerge = "--delete-branch-on-merge"
-	enableSquashMerge   = "--enable-squash-merge"
-	enableMergeCommit   = "--enable-merge-commit"
-	showUpdateBranch    = "--allow-update-branch"
-
-	disableAutoMerge   = enableAutoMerge + " " + off
-	keepBranchOnMerge  = deleteBranchOnMerge + " " + off
-	disableSquashMerge = enableSquashMerge + " " + off
-	disableMergeCommit = enableMergeCommit + " " + off
-	NoUpdateBranch     = showUpdateBranch + " " + off
-)
-
-type optsApply func(o *optsType)
-
-type optsType struct {
-	flags []string
-}
-
-var optsDefault = optsType{
-	flags: []string{},
-}
-
-func WithEnableAutoMerge() optsApply {
-	return func(o *optsType) {
-		o.flags = append(o.flags, enableAutoMerge)
+func Update(repo types.Repo, appliers ...OptsApply) error {
+	opts := &optsType{
+		debug: false,
+		settings: map[RepoSetting]bool{
+			SettingDeleteBranchOnMerge: true,
+			SettingEnableSquashMerge:   true,
+			SettingEnableRebaseMerge:   true,
+			SettingAllowUpdateBranch:   true,
+			SettingEnableAutoMerge:     true,
+			SettingEnableIssues:        true,
+			SettingEnableDiscussions:   false,
+			SettingEnableMergeCommit:   false,
+			SettingEnableProjects:      false,
+			SettingEnableWiki:          false,
+		},
 	}
-}
 
-func WithDeleteBranchOnMerge() optsApply {
-	return func(o *optsType) {
-		o.flags = append(o.flags, deleteBranchOnMerge)
-	}
-}
-
-func WithEnableSquashMerge() optsApply {
-	return func(o *optsType) {
-		o.flags = append(o.flags, enableSquashMerge)
-	}
-}
-
-func WithShowUpdateBranch() optsApply {
-	return func(o *optsType) {
-		o.flags = append(o.flags, showUpdateBranch)
-	}
-}
-
-func WithDisableAutoMerge() optsApply {
-	return func(o *optsType) {
-		o.flags = append(o.flags, disableAutoMerge)
-	}
-}
-
-func WithKeepBranchOnMerge() optsApply {
-	return func(o *optsType) {
-		o.flags = append(o.flags, keepBranchOnMerge)
-	}
-}
-
-func WithDisableSquashMerge() optsApply {
-	return func(o *optsType) {
-		o.flags = append(o.flags, disableSquashMerge)
-	}
-}
-
-func WithDisableMergeCommit() optsApply {
-	return func(o *optsType) {
-		o.flags = append(o.flags, disableMergeCommit)
-	}
-}
-
-func WithHiddenUpdateBranch() optsApply {
-	return func(o *optsType) {
-		o.flags = append(o.flags, NoUpdateBranch)
-	}
-}
-
-func Update(repo types.Repo, appliers ...optsApply) error {
-	opts := &optsDefault
 	for _, applier := range appliers {
 		applier(opts)
 	}
 
-	if len(opts.flags) == 0 {
-		return fmt.Errorf("no options specified")
+	flags := make([]string, 0, len(opts.settings))
+	for setting, enabled := range opts.settings {
+		flags = append(flags, fmt.Sprintf("%s=%t", setting, enabled))
 	}
 
 	command := []string{"repo", "edit", repo.FullName}
-	command = append(command, opts.flags...)
+	command = append(command, flags...)
 
-	if _, _, err := gh.Exec(command...); err != nil {
-		return fmt.Errorf("failed to enable auto merge for repo '%s': %w", repo.FullName, err)
+	if !opts.debug {
+		_, _, err := gh.Exec(command...)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
+}
+
+type RepoSetting string
+
+const (
+	// SettingAllowUpdateBranch => Allow a pull request head branch that is behind its base branch to be updated
+	SettingAllowUpdateBranch RepoSetting = "--allow-update-branch"
+
+	// SettingDeleteBranchOnMerge => Delete head branch when pull requests are merged
+	SettingDeleteBranchOnMerge RepoSetting = "--delete-branch-on-merge"
+
+	// SettingEnableAutoMerge => Enable auto-merge functionality
+	SettingEnableAutoMerge RepoSetting = "--enable-auto-merge"
+
+	// SettingEnableDiscussions => Enable discussions in the repository
+	SettingEnableDiscussions RepoSetting = "--enable-discussions"
+
+	// SettingEnableIssues => Enable issues in the repository
+	SettingEnableIssues RepoSetting = "--enable-issues"
+
+	// SettingEnableMergeCommit => Enable merging pull requests via merge commit
+	SettingEnableMergeCommit RepoSetting = "--enable-merge-commit"
+
+	// SettingEnableProjects => Enable projects in the repository
+	SettingEnableProjects RepoSetting = "--enable-projects"
+
+	// SettingEnableRebaseMerge => Enable merging pull requests via rebase
+	SettingEnableRebaseMerge RepoSetting = "--enable-rebase-merge"
+
+	// SettingEnableSquashMerge => Enable merging pull requests via squashed commit
+	SettingEnableSquashMerge RepoSetting = "--enable-squash-merge"
+
+	// SettingEnableWiki => Enable wiki in the repository
+	SettingEnableWiki RepoSetting = "--enable-wiki"
+)
+
+type optsType struct {
+	debug    bool
+	settings map[RepoSetting]bool
+}
+
+type OptsApply func(o *optsType)
+
+func WithDebug() OptsApply {
+	return func(o *optsType) {
+		o.debug = true
+	}
+}
+
+func With(setting RepoSetting, enabled bool) OptsApply {
+	return func(o *optsType) {
+		o.settings[setting] = enabled
+	}
 }
