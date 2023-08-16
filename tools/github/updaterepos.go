@@ -19,26 +19,21 @@ func UpdateRepos() error {
 	wg := sync.WaitGroup{}
 	errCh := make(chan error, len(repositories)*2)
 
-	for doNotUseIndex, doNotUseRepo := range repositories {
-		var (
-			i    = doNotUseIndex + 1
-			repo = doNotUseRepo
-		)
+	for _, doNotUseRepo := range repositories {
+		repo := doNotUseRepo
 
 		go func() {
 			wg.Add(1)
 			defer wg.Done()
 
-			updateErr := repoedit.Update(repo)
-
-			if updateErr != nil {
+			if updateErr := repoedit.Update(repo); updateErr != nil {
 				updateErr = fmt.Errorf("🔥 Failed to update '%s': %w", repo.FullName, updateErr)
 				fmt.Println(updateErr)
 				errCh <- updateErr
 				return
 			}
 
-			fmt.Printf("✅ Updated repo %s %d of %d\n", repo.FullName, i, len(repositories))
+			fmt.Printf("✅ Updated repo %s\n", repo.FullName)
 		}()
 	}
 
