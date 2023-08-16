@@ -28,11 +28,11 @@ func Approve() error {
 	for _, doNotUse := range prs {
 		pr := doNotUse
 
+		wg.Add(1)
 		go func() {
-			wg.Add(1)
 			defer wg.Done()
 
-			time.Sleep(50 * time.Millisecond)
+			time.Sleep(100 * time.Millisecond)
 
 			reviewErr := review.ApproveSquash(pr)
 			if reviewErr != nil {

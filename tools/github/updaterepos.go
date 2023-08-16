@@ -22,8 +22,8 @@ func UpdateRepos(dryRun bool) error {
 	for _, doNotUseRepo := range repositories {
 		repo := doNotUseRepo
 
+		wg.Add(1)
 		go func() {
-			wg.Add(1)
 			defer wg.Done()
 
 			updateErr := repoedit.Update(repo)
