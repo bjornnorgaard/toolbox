@@ -2,7 +2,6 @@ package repoedit
 
 import (
 	"fmt"
-
 	"github.com/bjornnorgaard/toolbox/tools/github/types"
 	"github.com/cli/go-gh"
 )
@@ -15,15 +14,15 @@ func Update(repo types.Repo, appliers ...OptsApply) error {
 		applier(opts)
 	}
 
-	flags := make([]string, 0, len(opts.settings))
-	for setting, enabled := range opts.settings {
+	flags := make([]string, 0, len(opts.Settings))
+	for setting, enabled := range opts.Settings {
 		flags = append(flags, fmt.Sprintf("%s=%t", setting, enabled))
 	}
 
 	command := []string{"repo", "edit", repo.FullName}
 	command = append(command, flags...)
 
-	if !opts.debug {
+	if !opts.Debug {
 		_, _, err := gh.Exec(command...)
 		if err != nil {
 			return err
@@ -35,8 +34,8 @@ func Update(repo types.Repo, appliers ...OptsApply) error {
 
 func DefaultOpts() OptsType {
 	return OptsType{
-		debug: false,
-		settings: map[RepoSetting]bool{
+		Debug: false,
+		Settings: map[RepoSetting]bool{
 			SettingDeleteBranchOnMerge: true,
 			SettingEnableSquashMerge:   true,
 			SettingEnableRebaseMerge:   true,
@@ -86,20 +85,20 @@ const (
 )
 
 type OptsType struct {
-	debug    bool
-	settings map[RepoSetting]bool
+	Debug    bool
+	Settings map[RepoSetting]bool
 }
 
 type OptsApply func(o *OptsType)
 
 func WithDebug(enabled bool) OptsApply {
 	return func(o *OptsType) {
-		o.debug = enabled
+		o.Debug = enabled
 	}
 }
 
 func With(setting RepoSetting, enabled bool) OptsApply {
 	return func(o *OptsType) {
-		o.settings[setting] = enabled
+		o.Settings[setting] = enabled
 	}
 }

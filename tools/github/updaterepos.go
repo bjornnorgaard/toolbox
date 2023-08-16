@@ -8,16 +8,16 @@ import (
 )
 
 func UpdateRepos(dryRun bool) error {
-	fmt.Printf("🔍 Fetching repos...\n")
+	fmt.Printf("🔍 Fetching repositories...\n")
 	repositories, err := repos.GetRepos()
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("🔧 Found %d repositories\n", len(repositories))
+	fmt.Printf("👍 Found %d repositories\n", len(repositories))
 
 	wg := sync.WaitGroup{}
-	errCh := make(chan error, len(repositories)*2)
+	errCh := make(chan error, len(repositories))
 
 	for _, doNotUseRepo := range repositories {
 		repo := doNotUseRepo
@@ -26,10 +26,9 @@ func UpdateRepos(dryRun bool) error {
 			wg.Add(1)
 			defer wg.Done()
 
-			updateErr := repoedit.Update(repo, repoedit.WithDebug(dryRun))
-
+			updateErr := repoedit.Update(repo)
 			if updateErr != nil {
-				updateErr = fmt.Errorf("🔥 Failed to update '%s': %w", repo.FullName, updateErr)
+				updateErr = fmt.Errorf("🔥 Error for '%s': %w", repo.FullName, updateErr)
 				fmt.Println(updateErr)
 				errCh <- updateErr
 				return
