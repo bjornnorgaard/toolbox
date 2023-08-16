@@ -29,10 +29,7 @@ func UpdateRepos() error {
 			wg.Add(1)
 			defer wg.Done()
 
-			updateErr := repoedit.Update(repo,
-				// repoedit.WithDebug(),
-				repoedit.With(repoedit.SettingEnableMergeCommit, false),
-			)
+			updateErr := repoedit.Update(repo)
 
 			if updateErr != nil {
 				updateErr = fmt.Errorf("🔥 Failed to update '%s': %w", repo.FullName, updateErr)
