@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bjornnorgaard/toolbox/tools/github/repoedit"
 	"github.com/bjornnorgaard/toolbox/tools/github/repos"
+	"github.com/bjornnorgaard/toolbox/tools/github/types"
 	"sync"
 )
 
@@ -16,11 +17,9 @@ func UpdateRepos(dryRun bool) error {
 	fmt.Printf("👍 Found %d repositories\n", len(repositories))
 
 	wg := sync.WaitGroup{}
-	for _, doNotUseRepo := range repositories {
-		repo := doNotUseRepo
-
+	for _, repo := range repositories {
 		wg.Add(1)
-		go func() {
+		go func(repo types.Repo) {
 			defer wg.Done()
 
 			err = repoedit.Update(repo, repoedit.WithDebug(dryRun))
@@ -30,7 +29,7 @@ func UpdateRepos(dryRun bool) error {
 			}
 
 			fmt.Printf("✅ Updated %s\n", repo.FullName)
-		}()
+		}(repo)
 	}
 
 	wg.Wait()

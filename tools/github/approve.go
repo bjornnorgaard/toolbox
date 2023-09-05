@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bjornnorgaard/toolbox/tools/github/pullrequests"
 	"github.com/bjornnorgaard/toolbox/tools/github/review"
+	"github.com/bjornnorgaard/toolbox/tools/github/types"
 	"sync"
 )
 
@@ -21,11 +22,9 @@ func Approve() error {
 	fmt.Printf("👀 Loaded %d pull requests\n", len(prs))
 
 	wg := sync.WaitGroup{}
-	for _, doNotUse := range prs {
-		pr := doNotUse
-
+	for _, pr := range prs {
 		wg.Add(1)
-		go func() {
+		go func(pr types.PR) {
 			defer wg.Done()
 
 			if err = review.ApproveSquash(pr); err != nil {
@@ -34,7 +33,7 @@ func Approve() error {
 			}
 
 			fmt.Printf("✅ Approved %s PR#%d '%s'\n", pr.Repository, pr.Number, pr.Title)
-		}()
+		}(pr)
 	}
 
 	wg.Wait()
