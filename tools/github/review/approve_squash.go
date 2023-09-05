@@ -7,14 +7,20 @@ import (
 )
 
 const (
-	dependabotSquash = "@dependabot squash and merge"
+	dependabotSquash   = "@dependabot squash and merge"
+	dependabotRecreate = "@dependabot recreate"
 )
 
-func ApproveSquash(pr types.PR) error {
+func ApproveSquash(pr types.PR, opts ...ApplyOpts) error {
+	defaultOpt := OptsType{messageBody: dependabotSquash}
+	for _, apply := range opts {
+		apply(&defaultOpt)
+	}
+
 	_, _, err := gh.Exec("pr", "review",
 		fmt.Sprintf("%d", pr.Number),
 		fmt.Sprintf("%s", "--approve"),
-		fmt.Sprintf("--body=%s", dependabotSquash),
+		fmt.Sprintf("--body=%s", defaultOpt.messageBody),
 		fmt.Sprintf("--repo=%s", pr.RepositoryWithOwner),
 	)
 
@@ -23,4 +29,22 @@ func ApproveSquash(pr types.PR) error {
 	}
 
 	return nil
+}
+
+type OptsType struct {
+	messageBody string
+}
+
+type ApplyOpts func(o *OptsType)
+
+func WithSquash() ApplyOpts {
+	return func(o *OptsType) {
+		o.messageBody = dependabotSquash
+	}
+}
+
+func WithRecreate() ApplyOpts {
+	return func(o *OptsType) {
+		o.messageBody = dependabotRecreate
+	}
 }

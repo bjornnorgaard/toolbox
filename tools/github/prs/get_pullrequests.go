@@ -1,4 +1,4 @@
-package pullrequests
+package prs
 
 import (
 	"encoding/json"
@@ -28,73 +28,73 @@ var optsDefault = optsType{
 	limit:  1000,
 }
 
-func withStateOpen() optsApply {
+func WithStateOpen() optsApply {
 	return func(o *optsType) {
 		o.state = "open"
 	}
 }
 
-func withStateClosed() optsApply {
+func WithStateClosed() optsApply {
 	return func(o *optsType) {
 		o.state = "closed"
 	}
 }
 
-func withAuthorBot() optsApply {
+func WithAuthorBot() optsApply {
 	return func(o *optsType) {
-		withAuthor("app/dependabot")
+		WithAuthor("app/dependabot")
 	}
 }
 
-func withAuthor(author string) optsApply {
+func WithAuthor(author string) optsApply {
 	return func(o *optsType) {
 		o.author = author
 	}
 }
 
-func withReviewApproved() optsApply {
+func WithReviewApproved() optsApply {
 	return func(o *optsType) {
 		o.review = "approved"
 	}
 }
 
-func withReviewRequired() optsApply {
+func WithReviewRequired() optsApply {
 	return func(o *optsType) {
 		o.review = "required"
 	}
 }
 
-func withReviewChangesRequested() optsApply {
+func WithReviewChangesRequested() optsApply {
 	return func(o *optsType) {
 		o.review = "changes_requested"
 	}
 }
 
-func withReviewNotApproved() optsApply {
+func WithReviewNotApproved() optsApply {
 	return func(o *optsType) {
 		o.review = "none"
 	}
 }
 
-func withLimit(limit uint) optsApply {
+func WithLimit(limit uint) optsApply {
 	return func(o *optsType) {
 		o.limit = limit
 	}
 }
 
-func withChecksSucceeded() optsApply {
+func WithChecksSucceeded() optsApply {
 	return func(o *optsType) {
 		o.checks = "success"
 	}
 }
 
-func withChecksFailed() optsApply {
+func WithChecksFailed() optsApply {
 	return func(o *optsType) {
 		o.checks = "failure"
 	}
 }
 
-func withChecksPending() optsApply {
+func WithChecksPending() optsApply {
 	return func(o *optsType) {
 		o.checks = "pending"
 	}

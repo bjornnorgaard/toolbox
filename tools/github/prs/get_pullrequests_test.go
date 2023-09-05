@@ -1,4 +1,4 @@
-package pullrequests
+package prs
 
 import (
 	"github.com/stretchr/testify/require"
