@@ -41,7 +41,7 @@ func DefaultOpts() OptsType {
 			SettingEnableRebaseMerge:   true,
 			SettingEnableAutoMerge:     true,
 			SettingEnableIssues:        true,
-			SettingAllowUpdateBranch:   false,
+			SettingAllowUpdateBranch:   true,
 			SettingEnableDiscussions:   false,
 			SettingEnableMergeCommit:   false,
 			SettingEnableProjects:      false,

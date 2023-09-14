@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-type optsApply func(o *optsType)
+type OptsApply func(o *optsType)
 
 type optsType struct {
 	author string
@@ -28,73 +28,73 @@ var optsDefault = optsType{
 	limit:  1000,
 }
 
-func WithStateOpen() optsApply {
+func WithStateOpen() OptsApply {
 	return func(o *optsType) {
 		o.state = "open"
 	}
 }
 
-func WithStateClosed() optsApply {
+func WithStateClosed() OptsApply {
 	return func(o *optsType) {
 		o.state = "closed"
 	}
 }
 
-func WithAuthorBot() optsApply {
+func WithAuthorBot() OptsApply {
 	return func(o *optsType) {
 		WithAuthor("app/dependabot")
 	}
 }
 
-func WithAuthor(author string) optsApply {
+func WithAuthor(author string) OptsApply {
 	return func(o *optsType) {
 		o.author = author
 	}
 }
 
-func WithReviewApproved() optsApply {
+func WithReviewApproved() OptsApply {
 	return func(o *optsType) {
 		o.review = "approved"
 	}
 }
 
-func WithReviewRequired() optsApply {
+func WithReviewRequired() OptsApply {
 	return func(o *optsType) {
 		o.review = "required"
 	}
 }
 
-func WithReviewChangesRequested() optsApply {
+func WithReviewChangesRequested() OptsApply {
 	return func(o *optsType) {
 		o.review = "changes_requested"
 	}
 }
 
-func WithReviewNotApproved() optsApply {
+func WithReviewNotApproved() OptsApply {
 	return func(o *optsType) {
 		o.review = "none"
 	}
 }
 
-func WithLimit(limit uint) optsApply {
+func WithLimit(limit uint) OptsApply {
 	return func(o *optsType) {
 		o.limit = limit
 	}
 }
 
-func WithChecksSucceeded() optsApply {
+func WithChecksSucceeded() OptsApply {
 	return func(o *optsType) {
 		o.checks = "success"
 	}
 }
 
-func WithChecksFailed() optsApply {
+func WithChecksFailed() OptsApply {
 	return func(o *optsType) {
 		o.checks = "failure"
 	}
 }
 
-func WithChecksPending() optsApply {
+func WithChecksPending() OptsApply {
 	return func(o *optsType) {
 		o.checks = "pending"
 	}
@@ -124,7 +124,7 @@ var (
 	}]`)
 )
 
-func Get(applies ...optsApply) ([]types.PR, error) {
+func Get(applies ...OptsApply) ([]types.PR, error) {
 	opts := &optsDefault
 	for _, apply := range applies {
 		apply(opts)
