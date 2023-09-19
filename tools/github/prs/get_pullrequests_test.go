@@ -9,10 +9,10 @@ func TestPullRequests(t *testing.T) {
 	c := 7
 
 	list, err := Get(
-		withLimit(uint(c)),
-		withStateClosed(),
-		withChecksSucceeded(),
-		withReviewNotApproved(),
+		WithLimit(uint(c)),
+		WithStateClosed(),
+		WithChecksSucceeded(),
+		WithReviewNotApproved(),
 	)
 
 	require.NoErrorf(t, err, "failed to get pull requests: %v", err)

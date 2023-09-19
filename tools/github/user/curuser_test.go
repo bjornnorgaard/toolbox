@@ -1,4 +1,4 @@
-package curuser
+package user
 
 import (
 	"github.com/stretchr/testify/require"

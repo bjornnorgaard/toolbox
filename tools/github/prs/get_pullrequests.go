@@ -3,8 +3,8 @@ package prs
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bjornnorgaard/toolbox/tools/github/curuser"
 	"github.com/bjornnorgaard/toolbox/tools/github/types"
+	"github.com/bjornnorgaard/toolbox/tools/github/user"
 	"github.com/bjornnorgaard/toolbox/utils/jqexp"
 	"github.com/cli/go-gh"
 	"strings"
@@ -22,21 +22,21 @@ type optsType struct {
 
 var optsDefault = optsType{
 	author: "app/dependabot",
-	state:  "open",
+	state:  "--state=open",
 	checks: "success",
-	review: "none",
+	review: "--review=none",
 	limit:  1000,
 }
 
 func WithStateOpen() OptsApply {
 	return func(o *optsType) {
-		o.state = "open"
+		o.state = "--state=open"
 	}
 }
 
 func WithStateClosed() OptsApply {
 	return func(o *optsType) {
-		o.state = "closed"
+		o.state = "--state=closed"
 	}
 }
 
@@ -54,25 +54,25 @@ func WithAuthor(author string) OptsApply {
 
 func WithReviewApproved() OptsApply {
 	return func(o *optsType) {
-		o.review = "approved"
+		o.review = "--review=approved"
 	}
 }
 
 func WithReviewRequired() OptsApply {
 	return func(o *optsType) {
-		o.review = "required"
+		o.review = "--review=required"
 	}
 }
 
 func WithReviewChangesRequested() OptsApply {
 	return func(o *optsType) {
-		o.review = "changes_requested"
+		o.review = "--review=changes_requested"
 	}
 }
 
-func WithReviewNotApproved() OptsApply {
+func WithReviewAny() OptsApply {
 	return func(o *optsType) {
-		o.review = "none"
+		o.review = ""
 	}
 }
 
@@ -132,10 +132,10 @@ func Get(applies ...OptsApply) ([]types.PR, error) {
 
 	buf, _, err := gh.Exec("search", "prs",
 		fmt.Sprintf("--author=%s", opts.author),
-		fmt.Sprintf("--state=%s", opts.state),
-		fmt.Sprintf("--review=%s", opts.review),
+		fmt.Sprintf("%s", opts.state),
+		fmt.Sprintf("%s", opts.review),
 		fmt.Sprintf("--limit=%d", opts.limit),
-		fmt.Sprintf("--owner=%s", curuser.Me()),
+		fmt.Sprintf("--owner=%s", user.Me()),
 		fmt.Sprintf("--json=%s", strings.Join(fields, ",")),
 		fmt.Sprintf("--jq=%s", jq),
 	)
