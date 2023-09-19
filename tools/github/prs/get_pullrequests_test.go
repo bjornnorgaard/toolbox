@@ -12,7 +12,7 @@ func TestPullRequests(t *testing.T) {
 		WithLimit(uint(c)),
 		WithStateClosed(),
 		WithChecksSucceeded(),
-		WithReviewNotApproved(),
+		WithReviewAny(),
 	)
 
 	require.NoErrorf(t, err, "failed to get pull requests: %v", err)
