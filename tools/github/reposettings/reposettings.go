@@ -1,4 +1,4 @@
-package repoedit
+package reposettings
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/cli/go-gh"
 )
 
-func Update(repo types.Repo, appliers ...OptsApply) error {
+func ApplyDefaults(repo types.Repo, appliers ...OptsApply) error {
 	defaultOpts := DefaultOpts()
 	opts := &defaultOpts
 
