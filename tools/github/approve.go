@@ -32,7 +32,7 @@ func Approve() error {
 				fmt.Printf("❗️Failed to approve %s PR#%d '%s': %v\n", pr.Repository, pr.Number, pr.Title, err)
 				return
 			}
-			if err = merge.SetToAutoMerge(pr); err != nil {
+			if err = merge.Auto(pr); err != nil {
 				fmt.Println("❗️Failed to set to auto merge:", err)
 				return
 			}

@@ -2,8 +2,8 @@ package github
 
 import (
 	"fmt"
-	"github.com/bjornnorgaard/toolbox/tools/github/repoedit"
 	"github.com/bjornnorgaard/toolbox/tools/github/repos"
+	"github.com/bjornnorgaard/toolbox/tools/github/reposettings"
 	"github.com/bjornnorgaard/toolbox/tools/github/types"
 	"sync"
 )
@@ -22,7 +22,7 @@ func UpdateRepos(dryRun bool) error {
 		go func(repo types.Repo) {
 			defer wg.Done()
 
-			err = repoedit.Update(repo, repoedit.WithDebug(dryRun))
+			err = reposettings.ApplyDefaults(repo, reposettings.WithDebug(dryRun))
 			if err != nil {
 				fmt.Printf("🔥 Error for '%s': %v\n", repo.FullName, err)
 				return

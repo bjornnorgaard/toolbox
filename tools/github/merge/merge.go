@@ -6,7 +6,14 @@ import (
 	"github.com/cli/go-gh"
 )
 
-func SetToAutoMerge(pr types.PR) error {
+// https://cli.github.com/manual/gh_pr_merge
+const (
+	autoMerge              = "--auto"
+	useSquash              = "--squash"
+	deleteBranchAfterMerge = "--delete-branch"
+)
+
+func Auto(pr types.PR) error {
 	_, _, err := gh.Exec("pr", "merge",
 		fmt.Sprintf("%d", pr.Number),
 		fmt.Sprintf("%s", autoMerge),

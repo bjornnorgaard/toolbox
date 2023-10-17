@@ -32,7 +32,7 @@ func SetAutoMerge() error {
 		wg.Add(1)
 		go func(pr types.PR) {
 			defer wg.Done()
-			if err = merge.SetToAutoMerge(pr); err != nil {
+			if err = merge.Auto(pr); err != nil {
 				fmt.Printf("❗️Failed to set %s PR#%d '%s' to auto merge: %v\n", pr.Repository, pr.Number, pr.Title, err)
 				return
 			}
