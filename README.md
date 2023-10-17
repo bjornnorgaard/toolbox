@@ -2,7 +2,7 @@
 A collection of various tools.
 
 ## Installation
-If Go is installed.
+If Go is installed. Maybe drafter is working now?
 
 ```sh
 go install github.com/bjornnorgaard/toolbox@latest
