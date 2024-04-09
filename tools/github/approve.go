@@ -2,7 +2,6 @@ package github
 
 import (
 	"fmt"
-	"github.com/bjornnorgaard/toolbox/tools/github/merge"
 	"github.com/bjornnorgaard/toolbox/tools/github/prs"
 	"github.com/bjornnorgaard/toolbox/tools/github/review"
 	"github.com/bjornnorgaard/toolbox/tools/github/types"
@@ -30,10 +29,6 @@ func Approve() error {
 			defer wg.Done()
 			if err = review.ApproveSquash(pr, review.WithSquash()); err != nil {
 				fmt.Printf("❗️Failed to approve %s PR#%d '%s': %v\n", pr.Repository, pr.Number, pr.Title, err)
-				return
-			}
-			if err = merge.Auto(pr); err != nil {
-				fmt.Println("❗️Failed to set to auto merge:", err)
 				return
 			}
 			fmt.Printf("✅ Approved %s PR#%d '%s'\n", pr.Repository, pr.Number, pr.Title)
