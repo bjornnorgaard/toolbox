@@ -8,7 +8,11 @@ import (
 func TestPullRequests(t *testing.T) {
 	c := 2
 
-	list, err := Get()
+	list, err := Get(
+		WithLimit(uint(c)),
+		WithStateClosed(),
+		WithChecksSucceeded(),
+	)
 
 	require.NoErrorf(t, err, "failed to get pull requests: %v", err)
 	require.NotEmptyf(t, list, "expected pull requests to not be empty")
