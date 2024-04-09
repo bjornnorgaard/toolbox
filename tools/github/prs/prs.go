@@ -20,12 +20,14 @@ type optsType struct {
 	limit  uint
 }
 
-var optsDefault = optsType{
-	author: "app/dependabot",
-	state:  "--state=open",
-	checks: "success",
-	review: "--review=none",
-	limit:  1000,
+func getDefaultOpts() *optsType {
+	return &optsType{
+		author: "app/dependabot",
+		state:  "--state=open",
+		checks: "success",
+		review: "--review=none",
+		limit:  1000,
+	}
 }
 
 func WithStateOpen() OptsApply {
@@ -125,7 +127,7 @@ var (
 )
 
 func Get(applies ...OptsApply) ([]types.PR, error) {
-	opts := &optsDefault
+	opts := getDefaultOpts()
 	for _, apply := range applies {
 		apply(opts)
 	}

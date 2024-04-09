@@ -7,9 +7,7 @@ import (
 )
 
 func ApplyDefaults(repo types.Repo, appliers ...OptsApply) error {
-	defaultOpts := DefaultOpts()
-	opts := &defaultOpts
-
+	opts := getDefaultOpts()
 	for _, applier := range appliers {
 		applier(opts)
 	}
@@ -32,8 +30,8 @@ func ApplyDefaults(repo types.Repo, appliers ...OptsApply) error {
 	return nil
 }
 
-func DefaultOpts() OptsType {
-	return OptsType{
+func getDefaultOpts() *OptsType {
+	return &OptsType{
 		Debug: false,
 		Settings: map[RepoSetting]bool{
 			SettingDeleteBranchOnMerge: true,
