@@ -14,7 +14,7 @@ func SetAutoMerge() error {
 	list, err := prs.Get(
 		prs.WithAuthorBot(),
 		prs.WithChecksSucceeded(),
-		prs.WithReviewAny(),
+		prs.WithReviewNone(),
 	)
 
 	if err != nil {

@@ -13,68 +13,64 @@ import (
 type OptsApply func(o *optsType)
 
 type optsType struct {
-	author string
-	state  string
+	app    string
 	checks string
-	review string
 	limit  uint
+	owner  string
+	review string
+	state  string
 }
 
 func getDefaultOpts() *optsType {
 	return &optsType{
-		author: "app/dependabot",
-		state:  "--state=open",
+		app:    "dependabot",
 		checks: "success",
-		review: "--review=none",
-		limit:  1000,
+		limit:  100,
+		owner:  user.Me(),
+		review: "none",
+		state:  "open",
 	}
 }
 
 func WithStateOpen() OptsApply {
 	return func(o *optsType) {
-		o.state = "--state=open"
+		o.state = "open"
 	}
 }
 
 func WithStateClosed() OptsApply {
 	return func(o *optsType) {
-		o.state = "--state=closed"
+		o.state = "closed"
 	}
 }
 
 func WithAuthorBot() OptsApply {
 	return func(o *optsType) {
-		WithAuthor("app/dependabot")
-	}
-}
-
-func WithAuthor(author string) OptsApply {
-	return func(o *optsType) {
-		o.author = author
+		o.app = "dependabot"
 	}
 }
 
 func WithReviewApproved() OptsApply {
 	return func(o *optsType) {
-		o.review = "--review=approved"
+		o.review = "approved"
 	}
 }
 
 func WithReviewRequired() OptsApply {
 	return func(o *optsType) {
-		o.review = "--review=required"
+		o.review = "required"
 	}
 }
 
 func WithReviewChangesRequested() OptsApply {
 	return func(o *optsType) {
-		o.review = "--review=changes_requested"
+		o.review = "changes_requested"
 	}
 }
 
-func WithReviewAny() OptsApply {
+func WithReviewNone() OptsApply {
 	return func(o *optsType) {
-		o.review = ""
+		o.review = "none"
 	}
 }
 
@@ -133,11 +129,12 @@ func Get(applies ...OptsApply) ([]types.PR, error) {
 	}
 
 	buf, _, err := gh.Exec("search", "prs",
-		fmt.Sprintf("--author=%s", opts.author),
-		fmt.Sprintf("%s", opts.state),
-		fmt.Sprintf("%s", opts.review),
+		fmt.Sprintf("--app=%s", opts.app),
+		fmt.Sprintf("--checks=%s", opts.checks),
 		fmt.Sprintf("--limit=%d", opts.limit),
 		fmt.Sprintf("--owner=%s", user.Me()),
+		fmt.Sprintf("--review=%s", opts.review),
+		fmt.Sprintf("--state=%s", opts.state),
 		fmt.Sprintf("--json=%s", strings.Join(fields, ",")),
 		fmt.Sprintf("--jq=%s", jq),
 	)
