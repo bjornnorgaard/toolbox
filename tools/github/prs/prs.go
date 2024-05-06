@@ -130,7 +130,7 @@ func Get(applies ...OptsApply) ([]types.PR, error) {
 
 	buf, _, err := gh.Exec("search", "prs",
 		fmt.Sprintf("--app=%s", opts.app),
-		fmt.Sprintf("--checks=%s", opts.checks),
+		// fmt.Sprintf("--checks=%s", opts.checks),
 		fmt.Sprintf("--limit=%d", opts.limit),
 		fmt.Sprintf("--owner=%s", user.Me()),
 		fmt.Sprintf("--review=%s", opts.review),

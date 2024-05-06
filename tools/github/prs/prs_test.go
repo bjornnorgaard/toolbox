@@ -1,18 +1,15 @@
 package prs
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestPullRequests(t *testing.T) {
-	c := 2
+	c := 3
 
-	list, err := Get(
-		WithLimit(uint(c)),
-		WithStateClosed(),
-		WithChecksSucceeded(),
-	)
+	list, err := Get()
 
 	require.NoErrorf(t, err, "failed to get pull requests: %v", err)
 	require.NotEmptyf(t, list, "expected pull requests to not be empty")
