@@ -133,7 +133,7 @@ func Get(applies ...OptsApply) ([]types.PR, error) {
 		fmt.Sprintf("--app=%s", opts.app),
 		fmt.Sprintf("--checks=%s", opts.checks),
 		fmt.Sprintf("--limit=%d", opts.limit),
-		fmt.Sprintf("--owner=%s", user.Me()),
+		fmt.Sprintf("--owner=%s", opts.owner),
 		fmt.Sprintf("--review=%s", opts.review),
 		fmt.Sprintf("--state=%s", opts.state),
 		fmt.Sprintf("--json=%s", strings.Join(fields, ",")),

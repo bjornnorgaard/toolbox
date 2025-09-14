@@ -2,6 +2,7 @@ package review
 
 import (
 	"fmt"
+
 	"github.com/bjornnorgaard/toolbox/tools/github/types"
 	"github.com/cli/go-gh"
 )
@@ -12,7 +13,9 @@ const (
 )
 
 func ApproveSquash(pr types.PR, opts ...ApplyOpts) error {
-	defaultOpt := OptsType{messageBody: dependabotSquash}
+	defaultOpt := OptsType{
+		messageBody: dependabotSquash,
+	}
 	for _, apply := range opts {
 		apply(&defaultOpt)
 	}

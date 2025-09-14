@@ -13,12 +13,15 @@ func ConvertAllCharsTo(filePath string, methodName string, char string) (string,
 		return "", err
 	}
 
+	// Normalize line endings to Unix style
+	content := strings.ReplaceAll(string(file), "\r\n", "\n")
+
 	if len(methodName) == 0 {
-		chars := replaceAllChars(strings.SplitN(string(file), "\n", -1), char)
+		chars := replaceAllChars(strings.SplitN(content, "\n", -1), char)
 		return chars, nil
 	}
 
-	method, err := findMethodWithName(methodName, string(file))
+	method, err := findMethodWithName(methodName, content)
 	if err != nil {
 		return "", err
 	}
