@@ -131,7 +131,8 @@ func Get(applies ...OptsApply) ([]types.PR, error) {
 
 	buf, _, err := gh.Exec("search", "prs",
 		fmt.Sprintf("--app=%s", opts.app),
-		fmt.Sprintf("--checks=%s", opts.checks),
+		// Bugged: When "success" requested, nothing is returned.
+		// fmt.Sprintf("--checks=%s", opts.checks),
 		fmt.Sprintf("--limit=%d", opts.limit),
 		fmt.Sprintf("--owner=%s", opts.owner),
 		fmt.Sprintf("--review=%s", opts.review),
