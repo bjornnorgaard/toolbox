@@ -3,11 +3,12 @@ package repos
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	"github.com/bjornnorgaard/toolbox/tools/github/types"
 	"github.com/bjornnorgaard/toolbox/tools/github/user"
 	"github.com/bjornnorgaard/toolbox/utils/jqexp"
 	"github.com/cli/go-gh"
-	"strings"
 )
 
 type optsType struct {

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/bjornnorgaard/toolbox/tools/zeropad"
 	"github.com/spf13/cobra"
 )

@@ -2,10 +2,11 @@ package github
 
 import (
 	"fmt"
+	"sync"
+
 	"github.com/bjornnorgaard/toolbox/tools/github/repos"
 	"github.com/bjornnorgaard/toolbox/tools/github/reposettings"
 	"github.com/bjornnorgaard/toolbox/tools/github/types"
-	"sync"
 )
 
 func UpdateRepos(dryRun bool) error {

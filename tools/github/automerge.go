@@ -2,10 +2,11 @@ package github
 
 import (
 	"fmt"
+	"sync"
+
 	"github.com/bjornnorgaard/toolbox/tools/github/merge"
 	"github.com/bjornnorgaard/toolbox/tools/github/prs"
 	"github.com/bjornnorgaard/toolbox/tools/github/types"
-	"sync"
 )
 
 func SetAutoMerge() error {
