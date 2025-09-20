@@ -2,6 +2,7 @@ package merge
 
 import (
 	"fmt"
+
 	"github.com/bjornnorgaard/toolbox/tools/github/types"
 	"github.com/cli/go-gh"
 )
