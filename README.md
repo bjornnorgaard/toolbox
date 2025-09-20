@@ -8,7 +8,7 @@ If Go is installed.
 go install github.com/bjornnorgaard/toolbox@latest
 ```
 
-## Kobra CLI
+## Cobra CLI
 
 https://github.com/spf13/cobra-cli/blob/main/README.md
 
