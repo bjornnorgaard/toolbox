@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/cli/go-gh v1.2.1
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.11.1
 )
 
